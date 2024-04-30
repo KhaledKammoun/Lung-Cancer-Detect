@@ -37,7 +37,27 @@ class DataFrame:
                 # For example, you can perform operations like df.head() to see the first few rows
                 print(DataFrame.df)
                 # Return a success response
-                return jsonify({'success': 'File uploaded successfully', 'data': DataFrame.df.to_dict()})
+
+                data_json = DataFrame.df.to_json(orient='records')
+                
+                # le nombre des observations dans la base
+                nombre_observations = DataFrame.df.shape[0]
+
+                # le nombre des caractéristiques.
+                nombre_caractere = DataFrame.df.shape[1]
+                
+                print("nombre_observations : ", nombre_observations)
+                print("nombre_caractere : ", nombre_caractere)
+
+                return jsonify({
+                    'success': True,
+                    'message': 'File uploaded successfully',
+                    'data': data_json,
+                    'metadata': {
+                        'nombre_observations': nombre_observations,
+                        'nombre_caractere': nombre_caractere
+                    }
+                })
             except Exception as e:
                 return jsonify({'error': str(e)})
         else:
