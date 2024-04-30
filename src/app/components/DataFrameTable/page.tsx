@@ -5,7 +5,9 @@ import { getServerSideProps } from 'next/dist/build/templates/pages';
 type Props = Awaited<ReturnType<typeof getServerSideProps>>['props']
 
 const DataFrameTable: React.FC<Props>= ({ data }) => {
-  
+  if (!data || data.length === 0) {
+    return <div>No data available</div>;
+  }
   return (
     <div className={` ${styles.table_container} relative overflow-x-auto`}>
       <table className={` ${styles.table} table-auto overflow-scroll w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400`}>
