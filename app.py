@@ -3,27 +3,28 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from sklearn.datasets import make_blobs
-
 import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
-    
-
 from scipy.cluster.hierarchy import linkage, dendrogram
 
 
-df = pd.read_csv("cancer_des_poumons.csv")
+# Fichier PowerPoint :: pour la presentation des figure avec (comment tu a le faire)
+# Fichier PDF :: presentation du code avec des explication
+
+
 
 
 ##################################################################
 ########## 3.1. La phase de préparation de données ###############
 ##################################################################
 
+####### I - Prétraitement : ########
+# Télécharger et lire la base de données cancer_des_poumons.csv existent dans votre Classroom.
 
+df = pd.read_csv("cancer_des_poumons.csv")
 
-
-
-# 1 : Vérifier s’il existe des observations qui sont manquantes ou NaN, si c’est le cas alors remplacer les valeurs manquantes dans chaque colonne par la moyenne de la variable.
+# 1 : indiquer le nombre des observations dans la base ainsi que le nombre des caractéristiques.
 
 # le nombre des observations dans la base
 nombre_observations = df.shape[0]
@@ -34,8 +35,18 @@ print("nombre_caractere : ", nombre_caract)
 
 
 
+# 2 :: 1 : Verifier S'il exist des valeurs manquante ::
+nbManquant = 0
+for col in df.select_dtypes(include=['float64', 'int64']).columns:
+    if df[col].isnull().sum() > 0:
+        nbManquant+= df[col].isnull().sum()
 
-# 2 : 
+if (nbManquant > 0) :
+    print(f"il ya {nbManquant} valeurs manquante")
+else : 
+    print("il n'a pas des valeurs manquante")
+
+# 2 :: 2 : remplacer les valeurs manquantes dans chaque colonne par la moyenne de la variable.
 for col in df.select_dtypes(include=['float64', 'int64']).columns:
     if df[col].isnull().sum() > 0:
         meanValue = df[col].mean()
@@ -46,13 +57,11 @@ for col in df.select_dtypes(include=['float64', 'int64']).columns:
 
 
 
+####### II : Transformations ########
 
-
-
-# Phase II : Transformations :
+colonnes_number = df.select_dtypes(include=['float64', 'int64']).columns
 
 # Question 1 : transformer chaine en entier
-colonnes_number = df.select_dtypes(include=['float64', 'int64']).columns
 colonnes_string = df.select_dtypes(exclude=['float64', 'int64']).columns
 mappingCols = {}
 for col in colonnes_string :
@@ -61,34 +70,38 @@ for col in colonnes_string :
     for index, value in enumerate(unique_values) :
         print(value)
         df[col] = df[col].replace(value, index)
-
+        print(f"{value} ==> {index}")
 # print(df)
 
 
 
 
-
-# normaliser les valeurs
-# Question 2
+# Question 2 :: Vérifier si la base est normalisée ou non (centrée-réduite), effectuer les transformations nécessaires.
 mean = df.mean()
 std = df.std()
-print("Mean of DF : ", mean)
-print("Standard Diviation of DF : ", std)
-for col in df.columns :
-    df[col] = (df[col] - mean[col]) / std[col]
-
-mean = df.mean()
-std = df.std()
-print("New Mean of DF : ", round(mean, 2))
-print("New Standard Diviation of DF : ", std)
 
 
+if ((abs(round(mean, 0)) == 0).all() and (abs(round(std, 0)) == 1).all()) :
+    print("La Base de données et normalisé")
+
+else :
+    print("Mean of DF : ")
+    print(mean) # mean is a list
+    print("Standard Diviation of DF :")
+    print(std)
+    for col in df.columns :
+        df[col] = (df[col] - mean[col]) / std[col]
+
+    mean = df.mean()
+    std = df.std()
+    print("La Base est normalisé")
+print("New Mean of DF : ", abs(round(mean, 0)))
+print("New Standard Diviation of DF : ", abs(round(std, 0)))
 
 
 
 
-# afficher la matrice de corrélation 
-# Question 3
+# Question 3 ::: Afficher la matrice de corrélation puis analyser les dépendances des variables. Quels sont les couples de variables les plus corrélées.
 corr_matrix = df.corr()
 # print(corr)
 
@@ -100,12 +113,10 @@ plt.show()
 
 
 
-
-
 ### ANALYSE ::
 
 """
-Les variables "GENDER" et "CHEST PAIN" ont une corrélation de -0.36, ce qui indique une forte corrélation négative. Cela suggère une relation où le genre et la douleur thoracique ont tendance à varier de manière opposée.
+Les variables "GENDER" et "CHEST PAIN" ont une corrélation de -0.36, ce qui indique une corrélation négative. Cela suggère une relation où le genre et la douleur thoracique ont tendance à varier de manière opposée.
 Les variables "GENDER" et "ALCOHOL CONSUMING" ont une corrélation de -0.45, ce qui indique une forte corrélation négative. Cela suggère une relation où le genre et la consommation d'alcool ont tendance à varier de manière opposée.
 Les variables "YELLOW FINGERS" et "ANXIETY" ont une corrélation de 0.57, ce qui indique une forte corrélation positive. Cela suggère une relation où la présence de doigts jaunes et l'anxiété ont tendance à varier de manière similaire.
 Les variables "YELLOW FINGERS" et "SWALLOWING DIFFICULTY" ont une corrélation de 0.35, ce qui indique une corrélation positive mais moins forte. Cela suggère une relation où la présence de doigts jaunes et les difficultés à avaler peuvent varier ensemble mais avec moins de force.
@@ -117,7 +128,7 @@ Les variables "WHEEZING" et "COUGHING" ont une corrélation de 0.37, ce qui indi
 Les variables "ALCOHOL CONSUMING" et "CHEST PAIN" ont une corrélation de 0.33, ce qui indique une corrélation positive mais moins forte. Cela suggère une relation où la consommation d'alcool et la douleur thoracique peuvent varier ensemble mais avec moins de force.
 
 """
-
+ 
 # Exemple de données pour la courbe
 corr_threshold = 0.5  # Définir un seuil de corrélation (par exemple, 0.5)
 
@@ -132,6 +143,10 @@ for i in range(len(corr_matrix.columns)):
 print("Couples de variables les plus corrélées :")
 for pair in highly_correlated_pairs:
     print(pair)
+
+# On utilise ces couples pour spécifié quelle sont les couple qui affecte a cette maladie
+
+
 
 
 ###########################################################################
@@ -159,32 +174,19 @@ de la variation des données et sont donc considérées comme importantes.
 
 
 
-
 # Normaliser les données
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(df)
+
+# or X_scaled = df
 
 # Appliquer l'ACP
 acp = PCA()
 X_acp = acp.fit_transform(X_scaled)
 
-# # Afficher tous les composants principaux
-# num_components = len(acp.components_)
-
-# for i in range(num_components):
-#     plt.figure(figsize=(8, 6))
-#     plt.bar(range(len(df.columns)), acp.components_[i])
-#     plt.xlabel('Variables')
-#     plt.ylabel(f'PC{i+1}')
-#     plt.title(f'Composant Principal {i+1}')
-#     plt.xticks(range(len(df.columns)), df.columns, rotation=90)
-#     plt.grid(True)
-#     plt.show()
 
 
-
-
-
+# Affichage du tableau de ACP
 
 # Create a DataFrame to store the results
 components_df = pd.DataFrame(columns=['Composante Principale', 'Valeur Propre', 'Pourcentage', 'Pourcentage Cumulé'])
@@ -354,11 +356,11 @@ plt.show()
 
 
 # Générer des données aléatoires avec 2 clusters
-X, y = make_blobs(n_samples=300, centers=2, cluster_std=0.60, random_state=0)
+X = X_scaled
 
 # Appliquer l'algorithme K-means avec 2 clusters
 kmeans = KMeans(n_clusters=2)
-kmeans.fit(X)
+kmeans.fit(X_acp)
 
 
 
@@ -373,7 +375,7 @@ labels = kmeans.labels_
 
 # Afficher les données avec les centroïdes et les clusters colorés
 plt.figure(figsize=(8, 6))
-plt.scatter(X[:, 0], X[:, 1], c=labels, cmap='viridis', edgecolor='k', s=50)
+plt.scatter(X_acp[:, 0], X_acp[:, 1], c=labels, cmap='viridis', edgecolor='k', s=50)
 plt.scatter(centroids[:, 0], centroids[:, 1], c='red', marker='X', s=200, label='Centroids')
 plt.xlabel('Feature 1')
 plt.ylabel('Feature 2')
@@ -381,7 +383,6 @@ plt.title('K-means Clustering')
 plt.legend()
 plt.grid(True)
 plt.show()
-
 
 # Question 3
 # Appliquer l'algorithme Classification Ascendante Hiérarchique (CAH) pour diviser les données en deux classes.
