@@ -1,0 +1,37 @@
+.table_body {
+  max-height: calc(100% - 40px); /* Adjust the height as needed based on your table header and styling */
+  overflow-y: auto;
+}
+.table_container {
+  height: 74vh;
+  overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.table thead {
+    position: sticky;
+    top: 0; /* Stick the header to the top */
+    z-index: 1; /* Ensure the header stays above the body during scrolling */
+}
+/* Style the scrollbar */
+.table_container::-webkit-scrollbar, .table_body::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+}
+s
+.table_container::-webkit-scrollbar-track, .table_body::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Color of the track */
+}
+
+.table_container::-webkit-scrollbar-thumb, .table_body::-webkit-scrollbar-thumb {
+  background: #888; /* Color of the scrollbar */
+  border-radius: 3px; /* Rounded corners for the thumb */
+}
+
+.table_container::-webkit-scrollbar-thumb:hover, .table_body::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Color of the scrollbar on hover */
+}
+
+/* Optional: Hide scrollbar buttons */
+.table_container::-webkit-scrollbar-button {
+  display: none;
+}
+
