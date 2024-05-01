@@ -1,4 +1,3 @@
-import json
 from flask import Flask, request, jsonify
 import pandas as pd
 from flask_cors import CORS
@@ -16,7 +15,7 @@ from io import BytesIO
 import base64
 
 app = Flask(__name__)
-CORS(app)
+CORS(app)  # Initialize CORS with your Flask app
 
 class DataFrame:
     df = None
