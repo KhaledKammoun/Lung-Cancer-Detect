@@ -14,25 +14,24 @@
     z-index: 1; /* Ensure the header stays above the body during scrolling */
 }
 /* Style the scrollbar */
-.table_container::-webkit-scrollbar, .table_body::-webkit-scrollbar {
+.table_container::-webkit-scrollbar, .table_body::-webkit-scrollbar, .leftContainer::-webkit-scrollbar {
   width: 8px; /* Width of the scrollbar */
 }
 s
-.table_container::-webkit-scrollbar-track, .table_body::-webkit-scrollbar-track {
-  background: #f1f1f1; /* Color of the track */
+.table_container::-webkit-scrollbar-track, .table_body::-webkit-scrollbar-track, .leftContainer::-webkit-scrollbar-track {
+  background: transparent; /* Color of the track */
 }
 
-.table_container::-webkit-scrollbar-thumb, .table_body::-webkit-scrollbar-thumb {
+.table_container::-webkit-scrollbar-thumb, .table_body::-webkit-scrollbar-thumb , .leftContainer::-webkit-scrollbar-thumb{
   background: #888; /* Color of the scrollbar */
   border-radius: 3px; /* Rounded corners for the thumb */
 }
 
-.table_container::-webkit-scrollbar-thumb:hover, .table_body::-webkit-scrollbar-thumb:hover {
+.table_container::-webkit-scrollbar-thumb:hover, .table_body::-webkit-scrollbar-thumb:hover , .leftContainer::-webkit-scrollbar-thumb:hover{
   background: #555; /* Color of the scrollbar on hover */
 }
 
 /* Optional: Hide scrollbar buttons */
-.table_container::-webkit-scrollbar-button {
+.table_container::-webkit-scrollbar-button, .table_body::-webkit-scrollbar-button, .leftContainer::-webkit-scrollbar-button {
   display: none;
 }
-
