@@ -116,17 +116,7 @@ plt.show()
 ### ANALYSE ::
 
 """
-Les variables "GENDER" et "CHEST PAIN" ont une corrélation de -0.36, ce qui indique une corrélation négative. Cela suggère une relation où le genre et la douleur thoracique ont tendance à varier de manière opposée.
-Les variables "GENDER" et "ALCOHOL CONSUMING" ont une corrélation de -0.45, ce qui indique une forte corrélation négative. Cela suggère une relation où le genre et la consommation d'alcool ont tendance à varier de manière opposée.
 Les variables "YELLOW FINGERS" et "ANXIETY" ont une corrélation de 0.57, ce qui indique une forte corrélation positive. Cela suggère une relation où la présence de doigts jaunes et l'anxiété ont tendance à varier de manière similaire.
-Les variables "YELLOW FINGERS" et "SWALLOWING DIFFICULTY" ont une corrélation de 0.35, ce qui indique une corrélation positive mais moins forte. Cela suggère une relation où la présence de doigts jaunes et les difficultés à avaler peuvent varier ensemble mais avec moins de force.
-Les variables "ANXIETY" et "SWALLOWING DIFFICULTY" ont une corrélation de 0.49, ce qui indique une forte corrélation positive. Cela suggère une relation où l'anxiété et les difficultés à avaler ont tendance à varier de manière similaire.
-Les variables "PEER PRESSURE" et "SWALLOWING DIFFICULTY" ont une corrélation de 0.37, ce qui indique une corrélation positive mais moins forte. Cela suggère une relation où la pression des pairs et les difficultés à avaler peuvent varier ensemble mais avec moins de force.
-Les variables "FATIGUE" et "SHORTNESS OF BREATH" ont une corrélation de 0.44, ce qui indique une forte corrélation positive. Cela suggère une relation où la fatigue et le souffle court ont tendance à varier de manière similaire.
-Les variables "ALLERGY" et "ALCOHOL CONSUMING" ont une corrélation de 0.34, ce qui indique une corrélation positive mais moins forte. Cela suggère une relation où les allergies et la consommation d'alcool peuvent varier ensemble mais avec moins de force.
-Les variables "WHEEZING" et "COUGHING" ont une corrélation de 0.37, ce qui indique une corrélation positive mais moins forte. Cela suggère une relation où les sifflements et la toux peuvent varier ensemble mais avec moins de force.
-Les variables "ALCOHOL CONSUMING" et "CHEST PAIN" ont une corrélation de 0.33, ce qui indique une corrélation positive mais moins forte. Cela suggère une relation où la consommation d'alcool et la douleur thoracique peuvent varier ensemble mais avec moins de force.
-
 """
  
 # Exemple de données pour la courbe
@@ -173,20 +163,19 @@ de la variation des données et sont donc considérées comme importantes.
 # Question 1 :: Appliquer sur la base une ACP normée. Interpréter les valeurs propres.
 
 
+# Sélectionner uniquement les colonnes numériques
+col_number = df.select_dtypes(include='number')
 
-# Normaliser les données
+# Standardiser les données
 scaler = StandardScaler()
-X_scaled = scaler.fit_transform(df)
+df_std = scaler.fit_transform(col_number)
 
-# or X_scaled = df
-
-# Appliquer l'ACP
-acp = PCA()
-X_acp = acp.fit_transform(X_scaled)
+# Appliquer une ACP normée sur les données
+acp = PCA(n_components=len(col_number.columns))
+acp.fit(df_std)
 
 
 
-# Affichage du tableau de ACP
 
 # Create a DataFrame to store the results
 components_df = pd.DataFrame(columns=['Composante Principale', 'Valeur Propre', 'Pourcentage', 'Pourcentage Cumulé'])
@@ -205,9 +194,8 @@ print(components_df)
 
 
 
-
-## Afficher les valeurs propres
-valeursPropres = acp.explained_variance_
+# Interpréter les valeurs propres
+valeursPropres = acp.explained_variance_ratio_
 print("Valeurs propres :", valeursPropres)
 
 # Créer la figure
@@ -232,116 +220,47 @@ plt.show()
 
 
 
+# Question 2 ::
 
-# Question 2 :: Déterminer le pourcentage d’inertie à partir de l’éboulis des valeurs propres. Quelles sont les composantes principales à tirées ?
+# Question 2-1 :: Déterminer le pourcentage d’inertie à partir de l’éboulis des valeurs propres. Quelles sont les composantes principales à tirées ?
 
-# Calculer le pourcentage d'inertie expliqué par chaque composante principale
-pourcentage_inertie = explained_variance_ratio * 100
+pourcentage_inertie = valeursPropres * 100
 
-# Calculer le pourcentage d'inertie cumulé
-pourcentage_inertie_cumule = np.cumsum(pourcentage_inertie)
-
-# Tracer le graphique du pourcentage d'inertie cumulé
-plt.figure(figsize=(10, 6))
-plt.plot(range(1, len(pourcentage_inertie_cumule) + 1), pourcentage_inertie_cumule, marker='o')
-plt.xlabel('Composantes principales')
-plt.ylabel('Pourcentage d\'inertie cumulé')
-plt.title('Pourcentage d\'inertie cumulé')
-plt.grid(True)
+# Déterminer le pourcentage d'inertie à partir de l'éboulis des valeurs propres
+inertie_cumulative = np.cumsum(pourcentage_inertie)
+plt.plot(range(1, len(inertie_cumulative) + 1), inertie_cumulative, marker='o', linestyle='-')
+plt.xlabel('Nombre de composantes principales')
+plt.ylabel('Pourcentage d\'inertie cumulée')
+plt.title('Pourcentage d\'inertie cumulée')
 plt.show()
 
 
 
+# Question 3 :: Afficher la saturation des variables et tracer le cercle de corrélation. 
+
+# Tracer le cercle de corrélation
+plt.figure(figsize=(8, 8))
+plt.axhline(0, linestyle='--', linewidth=0.5)
+plt.axvline(0, linestyle='--', linewidth=0.5)
+plt.xlim(-1, 1)
+plt.ylim(-1, 1)
+plt.xlabel("PC1")
+plt.ylabel("PC2")
+plt.title("Cercle de Corrélation")
+
+# Tracer le cercle unitaire
+circle = plt.Circle((0, 0), 1, color='b', fill=False, linestyle='--')
+plt.gca().add_artist(circle)
 
 
-# Quelles sont les composantes principales à tirées ?
-# Les trois premières composantes principales sont à retenir, jusqu'au coude (~ 3 ou 4).
+# Tracer les vecteurs des variables
+for i in range(len(acp.components_[0])):
+    plt.arrow(0, 0, acp.components_[0, i], acp.components_[1, i], color='r', alpha=0.5, head_width=0.05)
+    plt.text(acp.components_[0, i]*1.1, acp.components_[1, i]*1.1, col_number.columns[i], color='g', ha='center', va='center')
 
-# Calculer les valeurs propres de l'ACP
-valeurs_propres = acp.explained_variance_
-
-# Calculer le critère de Kaiser (valeurs propres supérieures à 1)
-kaiser_criterion = valeurs_propres > 1
-
-# Trouver le nombre de composantes principales à retenir en utilisant le critère de Kaiser
-nombre_composantes_principales = np.sum(kaiser_criterion)
-
-# Imprimer le nombre de composantes principales à retenir selon le critère de Kaiser
-print("Nombre de composantes principales à retenir selon le critère de Kaiser :", nombre_composantes_principales)
-
-
-
-
-
-
-# Maintenant, vous pouvez utiliser ce nombre de composantes principales pour ajuster votre PCA
-acp_kaiser = PCA(n_components=nombre_composantes_principales)
-composantes_principales_kaiser = acp_kaiser.fit_transform(df)
-
-# Afficher les valeurs propres associées aux composantes principales retenues selon le critère de Kaiser
-valeurs_propres_kaiser = acp_kaiser.explained_variance_
-print("Valeurs propres des composantes principales retenues selon le critère de Kaiser :", valeurs_propres_kaiser)
-
-# Créer un DataFrame pour afficher les composantes principales et leurs valeurs propres selon le critère de Kaiser
-data_kaiser = {'Composante Principale': [f'CP{i+1}' for i in range(len(valeurs_propres_kaiser))],
-               'Valeur Propre': valeurs_propres_kaiser}
-df_valeurs_propres_kaiser = pd.DataFrame(data_kaiser)
-
-# Afficher le DataFrame des valeurs propres selon le critère de Kaiser
-print("Valeurs propres des composantes principales retenues selon le critère de Kaiser :")
-print(df_valeurs_propres_kaiser)
-
-
-
-# Comparaison entre les axes :
-
-# Indices des axes choisis
-x_axis_index = 2  # Indice de l'axe X
-y_axis_index = 4  # Indice de l'axe Y
-
-# Création du graphique pour comparer les axes choisis
-plt.figure(figsize=(8, 6))
-plt.scatter(composantes_principales_kaiser[:, x_axis_index], composantes_principales_kaiser[:, y_axis_index], marker='o')
-plt.xlabel(f'Composante Principale {x_axis_index + 1}')
-plt.ylabel(f'Composante Principale {y_axis_index + 1}')
-plt.title(f'Comparaison des Composantes Principales {x_axis_index + 1} et {y_axis_index + 1}')
-plt.grid(True)
-plt.show()
-
-
-
-
-
-# Calculer la saturation des variables
-saturation = np.abs(acp.components_ * np.sqrt(acp.explained_variance_).reshape(-1, 1))
-
-# Afficher les vecteurs de corrélation
-
-CP1 = 1
-CP2 = 2
-
-# Créer une figure et un axe
-fig, ax = plt.subplots(figsize=(8, 8))
-
-# Afficher les vecteurs de corrélation
-for i, (comp_x, comp_y) in enumerate(zip(acp.components_[CP1 - 1], acp.components_[CP2 - 1])):
-    ax.arrow(0, 0, comp_x, comp_y, head_width=0.05, head_length=0.1, fc='b', ec='b')
-    ax.text(comp_x + 0.05, comp_y + 0.05, df.columns[i], color='b')
-
-# Afficher le cercle de corrélation
 plt.grid()
-plt.axhline(0, color='black', linewidth=0.5)
-plt.axvline(0, color='black', linewidth=0.5)
-plt.xlabel(f"Composante Principale {CP1}")
-plt.ylabel(f"Composante Principale {CP2}")
-plt.title("Cercle de Corrélation (Saturation des Variables)")
-
-# Ajuster les limites des axes pour une meilleure lisibilité
-ax.set_xlim(-1, 1)
-ax.set_ylim(-1, 1)
-
-# Afficher la figure
 plt.show()
+
 
 
 
@@ -355,13 +274,17 @@ plt.show()
 # Appliquer l'algorithme des K-means pour diviser les données en deux classes.
 
 
-# Générer des données aléatoires avec 2 clusters
-X = X_scaled
-
 # Appliquer l'algorithme K-means avec 2 clusters
-kmeans = KMeans(n_clusters=2)
-kmeans.fit(X_acp)
+kmeans = KMeans(n_clusters=2, random_state=42)
+clusters = kmeans.fit_predict(df_std)
 
+
+df['Cluster'] = clusters
+
+# Transform data onto the first two principal components
+CP = acp.transform(df_std)
+CP1 = CP[:, 0]
+CP2 = CP[:, 1]
 
 
 #### Question 2
@@ -370,16 +293,17 @@ kmeans.fit(X_acp)
 # Obtenir les centroïdes des clusters
 centroids = kmeans.cluster_centers_
 
-# Obtenir les labels des clusters
-labels = kmeans.labels_
+# Projeter les centroïdes sur les deux premières composantes principales
+centroid_pc1 = centroids.dot(acp.components_[:2].T)[:, 0]
+centroid_pc2 = centroids.dot(acp.components_[:2].T)[:, 1]
 
-# Afficher les données avec les centroïdes et les clusters colorés
-plt.figure(figsize=(8, 6))
-plt.scatter(X_acp[:, 0], X_acp[:, 1], c=labels, cmap='viridis', edgecolor='k', s=50)
-plt.scatter(centroids[:, 0], centroids[:, 1], c='red', marker='X', s=200, label='Centroids')
-plt.xlabel('Feature 1')
-plt.ylabel('Feature 2')
-plt.title('K-means Clustering')
+plt.figure(figsize=(10, 8))
+plt.scatter(CP1[clusters == 0], CP2[clusters == 0], s=50, c='lightblue', label='Cluster 0', edgecolors='black')
+plt.scatter(CP1[clusters == 1], CP2[clusters == 1], s=50, c='orange', label='Cluster 1', edgecolors='black')
+plt.scatter(centroid_pc1, centroid_pc2, s=200, c='red', label='Centroids', marker='X')
+plt.title('Visualisation des Clusters et des Centroïdes avec ACP')
+plt.xlabel('Première Composante Principale')
+plt.ylabel('Deuxième Composante Principale')
 plt.legend()
 plt.grid(True)
 plt.show()
@@ -387,65 +311,20 @@ plt.show()
 # Question 3
 # Appliquer l'algorithme Classification Ascendante Hiérarchique (CAH) pour diviser les données en deux classes.
 
-# Génération de données aléatoires pour l'exemple
-np.random.seed(0)
-X = np.random.rand(10, 2)  # 10 échantillons avec 2 caractéristiques
+CAH = linkage(df_std, method='ward')
 
-# Appliquer l'algorithme de CAH pour diviser les données en deux clusters
-Z = linkage(X, method='ward')  # Utilisation de la méthode de liaison ward pour la CAH
-
-# Afficher le dendrogramme
-plt.figure(figsize=(10, 5))
-dendrogram(Z)
-plt.xlabel('Échantillons')
+# Afficher le dendrogramme pour la CAH
+plt.figure(figsize=(10, 6))
+dendrogram(CAH)
+plt.title('Dendrogramme de la Classification Ascendante Hiérarchique (CAH)')
+plt.xlabel('Indice de l\'échantillon')
 plt.ylabel('Distance euclidienne')
-plt.title('Dendrogramme CAH')
 plt.show()
-
-
 
 
 # Question 4
 # Comparer les résultats des deux algorithmes.
 
-
-# Générer des données aléatoires pour l'exemple
-X, _ = make_blobs(n_samples=100, centers=3, random_state=42, cluster_std=1.0)
-
-# Appliquer l'algorithme K-means
-kmeans = KMeans(n_clusters=3, random_state=42)
-kmeans_labels = kmeans.fit_predict(X)
-
-# Appliquer l'algorithme CAH
-linkage_matrix = linkage(X, method='ward')
-plt.figure(figsize=(10, 5))
-dendrogram(linkage_matrix)
-plt.title('Dendrogramme de la Classification Ascendante Hiérarchique (CAH)')
-plt.xlabel('Index des échantillons')
-plt.ylabel('Distance euclidienne')
-plt.show()
-
-# Comparer les résultats des deux algorithmes visuellement
-plt.figure(figsize=(14, 5))
-
-# Afficher les clusters K-means
-plt.subplot(1, 2, 1)
-plt.scatter(X[:, 0], X[:, 1], c=kmeans_labels, cmap='viridis', alpha=0.5)
-plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], marker='x', s=200, c='red', label='Centroides')
-plt.title('Clusters avec K-means')
-plt.xlabel('Feature 1')
-plt.ylabel('Feature 2')
-plt.legend()
-
-# Afficher les clusters CAH
-plt.subplot(1, 2, 2)
-dendrogram(linkage_matrix)
-plt.title('Clusters avec CAH')
-plt.xlabel('Index des échantillons')
-plt.ylabel('Distance euclidienne')
-
-plt.tight_layout()
-plt.show()
 
 
 # Afficher les inerties totales
@@ -456,8 +335,17 @@ inertie_kmeans = kmeans.inertia_
 
 
 # Calculer l'inertie totale de la CAH
-inertie_cah = linkage_matrix[-1, 2]
+inertie_cah = CAH[-1, 2] 
 
 
 print(f"Inertie totale de K-means : {inertie_kmeans}")
 print(f"Inertie totale de la CAH : {inertie_cah}")
+
+
+"""
+
+Inertie totale de K-means : 3989.781913784595
+Inertie totale de la CAH : 34.10028989982372
+
+On constate que l'inertie totale de CAH est nettement plus faible que celle de K-means. Cette différence suggère que CAH a réalisé une réduction plus importante des distances intra-cluster, ce qui se traduit par la création de clusters plus compacts et mieux séparés.
+"""

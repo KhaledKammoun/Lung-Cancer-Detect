@@ -25,7 +25,9 @@ const DataFrameTable: React.FC<Props>= ({ data }) => {
               <td scope="col" className=" text-center px-2 py-2" key={rowIndex}>{rowIndex}</td>
      
               {Object.values(row).map((value : any, colIndex) => (
-                <td scope="col" className=" text-center px-2 py-2" key={colIndex}>{value}</td>
+                <td scope="col" className=" text-center px-2 py-2" key={colIndex}>
+                  {typeof value === 'number' ? value.toFixed(2) : value}
+                </td>
               ))}
             </tr>
           ))}
