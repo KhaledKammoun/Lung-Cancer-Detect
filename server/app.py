@@ -3,7 +3,6 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from sklearn.datasets import make_blobs
-import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 from scipy.cluster.hierarchy import linkage, dendrogram
@@ -182,7 +181,7 @@ components_df = pd.DataFrame(columns=['Composante Principale', 'Valeur Propre', 
 
 # Calculate the percentage of variance explained and cumulative percentage
 explained_variance_ratio = acp.explained_variance_ratio_
-cumulative_percentage = np.cumsum(explained_variance_ratio) * 100
+cumulative_percentage = explained_variance_ratio.cumsum() * 100
 
 # Fill in the DataFrame with the results
 for i, (ev, cp) in enumerate(zip(acp.explained_variance_, cumulative_percentage)):
@@ -227,7 +226,7 @@ plt.show()
 pourcentage_inertie = valeursPropres * 100
 
 # Déterminer le pourcentage d'inertie à partir de l'éboulis des valeurs propres
-inertie_cumulative = np.cumsum(pourcentage_inertie)
+inertie_cumulative = pourcentage_inertie.cumsum()
 plt.plot(range(1, len(inertie_cumulative) + 1), inertie_cumulative, marker='o', linestyle='-')
 plt.xlabel('Nombre de composantes principales')
 plt.ylabel('Pourcentage d\'inertie cumulée')
