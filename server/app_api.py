@@ -16,7 +16,7 @@ from io import BytesIO
 import base64
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "https://your-vercel-app.vercel.app"}})
+CORS(app)
 
 class DataFrame:
     df = None
