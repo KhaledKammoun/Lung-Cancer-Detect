@@ -33,6 +33,7 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
+from scipy.cluster.hierarchy import dendrogram, linkage
 
 from io import BytesIO
 import base64
@@ -479,17 +480,11 @@ class DataFrame:
         # Question 3
         # Appliquer l'algorithme Classification Ascendante Hiérarchique (CAH) pour diviser les données en deux classes.
 
-        DataFrame.CAH = pd.Series([pd.NA] * len(DataFrame), dtype='object')
-
-        # Perform hierarchical clustering using pandas
-        for i in range(1, len(DataFrame)):
-            distances = ((DataFrame.df_std.iloc[:-i] - DataFrame.df_std.iloc[i:]) ** 2).sum(axis=1)
-            closest_clusters = distances.idxmin()
-            DataFrame.at[closest_clusters, 'CAH'] = i
+        DataFrame.CAH = linkage(DataFrame.df_std, method='ward')
 
         # Afficher le dendrogramme pour la CAH
         plt.figure(figsize=(10, 6))
-        plt.plot(DataFrame.CAH.values)
+        dendrogram(DataFrame.CAH)
         plt.title('Dendrogramme de la Classification Ascendante Hiérarchique (CAH)')
         plt.xlabel('Indice de l\'échantillon')
         plt.ylabel('Distance euclidienne')
