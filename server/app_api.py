@@ -1,29 +1,3 @@
-#### Download Libraries >> using pip install ...
-# Flask
-# pandas
-# seaborn
-# matplotlib
-# scikit-learn
-# numpy
-# scipy
-# flask-cors
-#
-#
-#### Run the Server:
-# Once you have the libraries installed,
-# navigate to the location of the app_api.py file in your terminal or command prompt.
-# Then, run the following command to start the server :
-# > python app_api.py
-#
-#
-#### Access the App:
-# After the server starts running, open your web browser and go to the following URL:
-# > https://lung-cancer-detect.vercel.app/
-#
-#This is where your app will be hosted.
-#
-
-
 from flask import Flask, request, jsonify
 import pandas as pd
 from flask_cors import CORS
@@ -481,7 +455,7 @@ class DataFrame:
         # Appliquer l'algorithme Classification Ascendante Hiérarchique (CAH) pour diviser les données en deux classes.
 
         DataFrame.CAH = linkage(DataFrame.df_std, method='ward')
-
+        
         # Afficher le dendrogramme pour la CAH
         plt.figure(figsize=(10, 6))
         dendrogram(DataFrame.CAH)

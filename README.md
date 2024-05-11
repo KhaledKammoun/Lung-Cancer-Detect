@@ -1,36 +1,27 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Consultez mon site web <a href="https://lung-cancer-detect.vercel.app/">ici</a> !
 
-## Getting Started
 
-First, run the development server:
+# Téléchargement des Bibliothèques
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Pour installer les bibliothèques nécessaires, utilisez la commande pip install :
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+#### Flask
+#### pandas
+#### seaborn
+#### matplotlib
+#### scikit-learn
+#### numpy
+#### scipy
+#### flask-cors
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Lancement du Serveur
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+#### Une fois les bibliothèques installées, rendez-vous dans le répertoire contenant le fichier app_api.py via votre terminal ou votre invite de commande. Ensuite, exécutez la commande suivante pour démarrer le serveur :
+##### > python app_api.py (le chemin dans le GitHub Repository : /server)
 
-## Learn More
+#### Une fois le serveur démarré, ouvrez votre navigateur web et allez à l'URL suivante :
+##### https://lung-cancer-detect.vercel.app/
 
-To learn more about Next.js, take a look at the following resources:
+## Description de l'Application
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Ce projet vise à fournir un outil d'aide à la décision pour les professionnels de la santé. L'application utilise des techniques avancées de traitement de données telles que k-means, CAH (Classification Ascendante Hiérarchique), ainsi que des bibliothèques comme  pandas, scipy, seaborn, matplotlib, numpy, sklearn, flask, etc., pour générer des analyses précises et des insights significatifs. Elle intègre des technologies modernes telles que React, Next.js, Tailwind CSS, et Flask en Python pour offrir une expérience utilisateur fluide et une gestion efficace des données.

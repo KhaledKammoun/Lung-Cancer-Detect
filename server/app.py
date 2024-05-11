@@ -2,7 +2,6 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
-from sklearn.datasets import make_blobs
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 from scipy.cluster.hierarchy import linkage, dendrogram
@@ -277,8 +276,6 @@ plt.show()
 kmeans = KMeans(n_clusters=2, random_state=42)
 clusters = kmeans.fit_predict(df_std)
 
-
-df['Cluster'] = clusters
 
 # Transform data onto the first two principal components
 CP = acp.transform(df_std)
